@@ -20,7 +20,6 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// 这里写你的用户验证逻辑（例子先假装成功）
 	if req.Username != "admin" || req.Password != "123456" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "用户名或密码错误"})
 		return

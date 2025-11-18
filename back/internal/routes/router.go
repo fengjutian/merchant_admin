@@ -23,6 +23,8 @@ func SetupRoutes(db *gorm.DB) *gin.Engine {
 	// 创建控制器实例
 	businessController := controllers.NewBusinessController(businessService)
 
+	r.POST("/login", controllers.Login)
+
 	// API 路由组
 	api := r.Group("/api/v1")
 	{
