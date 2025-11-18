@@ -94,9 +94,9 @@ func (r *businessRepository) GetByEmail(email string) (*model.Business, error) {
 
 // GetByType 根据类型获取商家列表
 func (r *businessRepository) GetByType(businessType string) ([]*model.Business, error) {
-	var businesses []*model.Business
-	err := r.db.Where("type = ? AND status != ?", businessType, model.BusinessStatusSuspended).Find(&businesses).Error
-	return businesses, err
+	var business []*model.Business
+	err := r.db.Where("type = ? AND status != ?", businessType, model.BusinessStatusSuspended).Find(&business).Error
+	return business, err
 }
 
 // SearchByName 根据名称搜索商家

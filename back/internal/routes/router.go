@@ -26,7 +26,7 @@ func SetupRoutes(db *gorm.DB) *gin.Engine {
 	api := r.Group("/api/v1")
 	{
 		// 商家路由
-		businesses := api.Group("/businesses")
+		businesses := api.Group("/business")
 		{
 			businesses.GET("", businessController.GetBusinesses)            // 获取商家列表
 			businesses.GET("/:id", businessController.GetBusiness)          // 获取单个商家

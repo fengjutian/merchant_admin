@@ -19,3 +19,12 @@ func InitDB() {
 
 	DB = db
 }
+
+func CloseDB() {
+	sqlDB, err := DB.DB()
+	if err != nil {
+		log.Fatal("Failed to close database: ", err)
+	}
+
+	sqlDB.Close()
+}
