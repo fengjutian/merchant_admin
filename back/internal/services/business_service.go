@@ -40,6 +40,7 @@ type BusinessService interface {
 	GetBusinessCountByStatus(status string) (int64, error)
 
 	// 业务状态管理
+	UpdateBusinessStatus(id int, status string) error
 	ActivateBusiness(id int) error
 	DeactivateBusiness(id int) error
 	SuspendBusiness(id int) error
@@ -360,6 +361,29 @@ func (s *businessService) GetBusinessesByStatus(status string) ([]*model.Busines
 	}
 
 	return s.businessRepo.GetByStatus(status)
+}
+
+// UpdateBusinessStatus 更新商家状态
+func (s *businessService) UpdateBusinessStatus(id int, status string) error {
+	if id <= 0 {
+		return errors.New("无效的商家ID")
+	}
+	if status == "" {
+		return errors.New("商家状态不能为空")
+	}
+	if !validateBusinessStatus(status) {
+		return errors.New("商家状态无效")
+	}
+
+	// 获取现有商家信息
+	business, err := s.businessRepo.GetByID(id)
+	if err != nil {
+		return errors.New("商家不存在")
+	}
+
+	// 更新状态
+	business.Status = status
+	return s.businessRepo.Update(business)
 }
 
 // GetBusinessesWithPagination 分页获取商家列表

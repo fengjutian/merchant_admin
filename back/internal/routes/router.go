@@ -38,26 +38,33 @@ func SetupRoutes(db *gorm.DB) *gin.Engine {
 		// 商家路由
 		businesses := api.Group("/business", middleware.AuthMiddleware())
 		{
-			businesses.GET("", businessController.GetBusinesses)            // 获取商家列表
-			businesses.GET("/:id", businessController.GetBusiness)          // 获取单个商家
-			businesses.POST("", businessController.CreateBusiness)          // 创建商家
-			businesses.PUT("/:id", businessController.UpdateBusiness)       // 更新商家
-			businesses.DELETE("/:id", businessController.DeleteBusiness)    // 删除商家
-			businesses.GET("/search", businessController.SearchBusinesses)  // 搜索商家
-			businesses.GET("/type", businessController.GetBusinessesByType) // 按类型获取商家
+			businesses.GET("", businessController.GetBusinesses)                    // 获取商家列表
+			businesses.GET("/:id", businessController.GetBusiness)                  // 获取单个商家
+			businesses.POST("", businessController.CreateBusiness)                  // 创建商家
+			businesses.PUT("/:id", businessController.UpdateBusiness)               // 更新商家
+			businesses.DELETE("/:id", businessController.DeleteBusiness)             // 删除商家
+			businesses.PUT("/:id/status", businessController.UpdateBusinessStatus)   // 更新商家状态
+			businesses.GET("/status/:status", businessController.GetBusinessByStatus) // 根据状态获取商家
+			businesses.GET("/search", businessController.SearchBusinesses)          // 搜索商家
+			businesses.GET("/type", businessController.GetBusinessesByType)         // 按类型获取商家
+			businesses.GET("/rating", businessController.GetBusinessesByRating)     // 按评分获取商家
+			businesses.GET("/page", businessController.GetBusinessesWithPagination) // 分页获取商家
+			businesses.GET("/nearby", businessController.GetNearbyBusinesses)       // 获取附近商家
+			businesses.GET("/count", businessController.GetBusinessCount)           // 获取商家总数
+			businesses.GET("/count/type", businessController.GetBusinessCountByType) // 根据类型获取商家数量
 		}
 
 		// 用户路由
 		users := api.Group("/users")
 		{
-			users.GET("", userController.GetUsers)                    // 获取用户列表
-			users.GET("/:id", userController.GetUser)                 // 获取单个用户
-			users.POST("", userController.CreateUser)                 // 创建用户
-			users.PUT("/:id", userController.UpdateUser)              // 更新用户
-			users.DELETE("/:id", userController.DeleteUser)           // 删除用户
-			users.PUT("/:id/password", userController.ChangePassword) // 修改密码
-			users.PUT("/:id/status", userController.UpdateUserStatus) // 更新用户状态
-			users.GET("/role/:role", userController.GetUsersByRole)   // 根据角色获取用户列表
+			users.GET("", userController.GetUsers)                        // 获取用户列表
+			users.GET("/:id", userController.GetUser)                     // 获取单个用户
+			users.POST("", userController.CreateUser)                     // 创建用户
+			users.PUT("/:id", userController.UpdateUser)                  // 更新用户
+			users.DELETE("/:id", userController.DeleteUser)               // 删除用户
+			users.PUT("/:id/password", userController.ChangePassword)     // 修改密码
+			users.PUT("/:id/status", userController.UpdateUserStatus)     // 更新用户状态
+			users.GET("/role/:role", userController.GetUsersByRole)       // 根据角色获取用户列表
 			users.GET("/status/:status", userController.GetUsersByStatus) // 根据状态获取用户列表
 		}
 	}
