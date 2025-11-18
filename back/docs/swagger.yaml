@@ -1,4 +1,85 @@
 basePath: /api/v1
+definitions:
+  internal_controllers.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  internal_controllers.SuccessResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  merchant_back_internal_models.PasswordChangeRequest:
+    properties:
+      newPassword:
+        description: 新密码
+        minLength: 6
+        type: string
+      oldPassword:
+        description: 旧密码
+        type: string
+    required:
+    - newPassword
+    - oldPassword
+    type: object
+  merchant_back_internal_models.UserRegisterRequest:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      firstName:
+        description: 名
+        maxLength: 100
+        type: string
+      lastName:
+        description: 姓
+        maxLength: 100
+        type: string
+      password:
+        description: 密码
+        minLength: 6
+        type: string
+      phone:
+        description: 电话号码
+        maxLength: 20
+        type: string
+      username:
+        description: 用户名
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  merchant_back_internal_models.UserUpdateRequest:
+    properties:
+      avatar:
+        description: 头像URL
+        maxLength: 500
+        type: string
+      firstName:
+        description: 名
+        maxLength: 100
+        type: string
+      lastName:
+        description: 姓
+        maxLength: 100
+        type: string
+      phone:
+        description: 电话号码
+        maxLength: 20
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -12,7 +93,336 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Merchant Admin API
   version: "1.0"
-paths: {}
+paths:
+  /api/v1/users:
+    get:
+      consumes:
+      - application/json
+      description: 分页获取所有用户信息，支持分页参数
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_controllers.SuccessResponse'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+        "500":
+          description: 获取失败
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+      summary: 获取用户列表
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的用户账户
+      parameters:
+      - description: 用户信息
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/merchant_back_internal_models.UserRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 创建成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_controllers.SuccessResponse'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+        "400":
+          description: 参数验证失败或创建失败
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+      summary: 创建新用户
+      tags:
+      - users
+  /api/v1/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 根据用户ID删除用户账户
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除成功
+          schema:
+            $ref: '#/definitions/internal_controllers.SuccessResponse'
+        "400":
+          description: 无效的用户ID
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+        "404":
+          description: 用户不存在
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+        "500":
+          description: 删除失败
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+      summary: 删除用户
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: 根据用户ID获取单个用户的详细信息
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_controllers.SuccessResponse'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+        "400":
+          description: 无效的用户ID
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+        "404":
+          description: 用户不存在
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+      summary: 获取用户详情
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: 根据用户ID更新用户的基本信息
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 用户更新信息
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/merchant_back_internal_models.UserUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_controllers.SuccessResponse'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+        "400":
+          description: 无效的用户ID或参数验证失败
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+        "404":
+          description: 用户不存在
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+        "500":
+          description: 更新失败
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+      summary: 更新用户信息
+      tags:
+      - users
+  /api/v1/users/{id}/password:
+    put:
+      consumes:
+      - application/json
+      description: 根据用户ID修改用户密码
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 密码信息
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/merchant_back_internal_models.PasswordChangeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 修改成功
+          schema:
+            $ref: '#/definitions/internal_controllers.SuccessResponse'
+        "400":
+          description: 无效的用户ID或参数验证失败
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+      summary: 修改用户密码
+      tags:
+      - users
+  /api/v1/users/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: 根据用户ID更新用户状态（active/inactive/suspended）
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 用户状态
+        in: body
+        name: status
+        required: true
+        schema:
+          properties:
+            status:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新成功
+          schema:
+            $ref: '#/definitions/internal_controllers.SuccessResponse'
+        "400":
+          description: 无效的用户ID或状态值
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+        "500":
+          description: 更新失败
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+      summary: 更新用户状态
+      tags:
+      - users
+  /api/v1/users/role/{role}:
+    get:
+      consumes:
+      - application/json
+      description: 根据用户角色获取用户列表
+      parameters:
+      - description: 用户角色
+        enum:
+        - admin
+        - user
+        - merchant
+        in: path
+        name: role
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_controllers.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    additionalProperties: true
+                    type: object
+                  type: array
+              type: object
+        "400":
+          description: 角色参数不能为空
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+        "500":
+          description: 获取失败
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+      summary: 根据角色获取用户列表
+      tags:
+      - users
+  /api/v1/users/status/{status}:
+    get:
+      consumes:
+      - application/json
+      description: 根据用户状态获取用户列表
+      parameters:
+      - description: 用户状态
+        enum:
+        - active
+        - inactive
+        - suspended
+        in: path
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_controllers.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    additionalProperties: true
+                    type: object
+                  type: array
+              type: object
+        "400":
+          description: 状态参数不能为空
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+        "500":
+          description: 获取失败
+          schema:
+            $ref: '#/definitions/internal_controllers.ErrorResponse'
+      summary: 根据状态获取用户列表
+      tags:
+      - users
 securityDefinitions:
   BearerAuth:
     description: Type "Bearer" followed by a space and JWT token.
