@@ -23,6 +23,7 @@ func SetupRoutes(db *gorm.DB) *gin.Engine {
 
 	// 创建控制器实例
 	businessController := controllers.NewBusinessController(businessService)
+	userController := controllers.NewUserController(userService)
 	authController := controllers.NewAuthController(userService)
 
 	// 认证路由
@@ -44,6 +45,16 @@ func SetupRoutes(db *gorm.DB) *gin.Engine {
 			businesses.DELETE("/:id", businessController.DeleteBusiness)    // 删除商家
 			businesses.GET("/search", businessController.SearchBusinesses)  // 搜索商家
 			businesses.GET("/type", businessController.GetBusinessesByType) // 按类型获取商家
+		}
+
+		// 用户路由
+		users := api.Group("/users")
+		{
+			users.GET("", userController.GetUsers)          // 获取用户列表
+			users.GET("/:id", userController.GetUser)       // 获取单个用户
+			users.POST("", userController.CreateUser)       // 创建用户
+			users.PUT("/:id", userController.UpdateUser)    // 更新用户
+			users.DELETE("/:id", userController.DeleteUser) // 删除用户
 		}
 	}
 
