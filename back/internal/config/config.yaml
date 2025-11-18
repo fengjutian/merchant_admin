@@ -1,0 +1,3 @@
+jwt:
+  secret: "KJH87sd98HDS8df79SDF98sd8F7SDF8sd7FSD8fsd8F7sd8f7"
+  expire_hours: 24

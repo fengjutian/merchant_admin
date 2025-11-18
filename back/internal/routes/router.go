@@ -2,6 +2,7 @@ package routes
 
 import (
 	"merchant_back/internal/controllers"
+	"merchant_back/internal/middleware"
 	"merchant_back/internal/repositories"
 	"merchant_back/internal/services"
 	"net/http"
@@ -26,7 +27,7 @@ func SetupRoutes(db *gorm.DB) *gin.Engine {
 	api := r.Group("/api/v1")
 	{
 		// 商家路由
-		businesses := api.Group("/business")
+		businesses := api.Group("/business", middleware.AuthMiddleware())
 		{
 			businesses.GET("", businessController.GetBusinesses)            // 获取商家列表
 			businesses.GET("/:id", businessController.GetBusiness)          // 获取单个商家
