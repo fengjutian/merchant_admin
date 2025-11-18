@@ -50,11 +50,15 @@ func SetupRoutes(db *gorm.DB) *gin.Engine {
 		// 用户路由
 		users := api.Group("/users")
 		{
-			users.GET("", userController.GetUsers)          // 获取用户列表
-			users.GET("/:id", userController.GetUser)       // 获取单个用户
-			users.POST("", userController.CreateUser)       // 创建用户
-			users.PUT("/:id", userController.UpdateUser)    // 更新用户
-			users.DELETE("/:id", userController.DeleteUser) // 删除用户
+			users.GET("", userController.GetUsers)                    // 获取用户列表
+			users.GET("/:id", userController.GetUser)                 // 获取单个用户
+			users.POST("", userController.CreateUser)                 // 创建用户
+			users.PUT("/:id", userController.UpdateUser)              // 更新用户
+			users.DELETE("/:id", userController.DeleteUser)           // 删除用户
+			users.PUT("/:id/password", userController.ChangePassword) // 修改密码
+			users.PUT("/:id/status", userController.UpdateUserStatus) // 更新用户状态
+			users.GET("/role/:role", userController.GetUsersByRole)   // 根据角色获取用户列表
+			users.GET("/status/:status", userController.GetUsersByStatus) // 根据状态获取用户列表
 		}
 	}
 
