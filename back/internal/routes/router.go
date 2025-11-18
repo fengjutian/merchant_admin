@@ -19,11 +19,17 @@ func SetupRoutes(db *gorm.DB) *gin.Engine {
 
 	// 创建服务层实例
 	businessService := services.NewBusinessService(businessRepo)
+	userService := services.NewUserService(db)
 
 	// 创建控制器实例
 	businessController := controllers.NewBusinessController(businessService)
+	authController := controllers.NewAuthController(userService)
 
-	r.POST("/login", controllers.Login)
+	// 认证路由
+	r.POST("/login", authController.Login)
+	r.POST("/api/auth/login", authController.Login)
+	r.POST("/api/auth/refresh", authController.RefreshToken)
+	r.POST("/api/auth/logout", authController.Logout)
 
 	// API 路由组
 	api := r.Group("/api/v1")
