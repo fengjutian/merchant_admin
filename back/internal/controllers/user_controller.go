@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	models "merchant_back/internal/models"
+	model "merchant_back/internal/models"
 	"merchant_back/internal/services"
 
 	"github.com/gin-gonic/gin"
@@ -154,12 +154,12 @@ func (uc *UserController) GetUser(c *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user body models.UserRegisterRequest true "用户信息"
+// @Param user body model.UserRegisterRequest true "用户信息"
 // @Success 201 {object} SuccessResponse{data=map[string]interface{}} "创建成功"
 // @Failure 400 {object} ErrorResponse "参数验证失败或创建失败"
 // @Router /api/v1/users [post]
 func (uc *UserController) CreateUser(c *gin.Context) {
-	var req models.UserRegisterRequest
+	var req model.UserRegisterRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
@@ -171,7 +171,7 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 	}
 
 	// 创建用户对象
-	user := &models.User{
+	user := &model.User{
 		Username:  req.Username,
 		Email:     req.Email,
 		Password:  req.Password,
@@ -234,7 +234,7 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	var req models.UserUpdateRequest
+	var req model.UserUpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Code:    400,
@@ -366,7 +366,7 @@ func (uc *UserController) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	var req models.PasswordChangeRequest
+	var req model.PasswordChangeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Code:    400,
@@ -430,11 +430,11 @@ func (uc *UserController) UpdateUserStatus(c *gin.Context) {
 	}
 
 	switch req.Status {
-	case models.UserStatusActive:
+	case model.UserStatusActive:
 		err = uc.userService.ActivateUser(uint(id))
-	case models.UserStatusInactive:
+	case model.UserStatusInactive:
 		err = uc.userService.DeactivateUser(uint(id))
-	case models.UserStatusSuspended:
+	case model.UserStatusSuspended:
 		err = uc.userService.SuspendUser(uint(id))
 	default:
 		c.JSON(http.StatusBadRequest, ErrorResponse{
