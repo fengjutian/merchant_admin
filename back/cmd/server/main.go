@@ -1,13 +1,16 @@
 package main
 
 import (
+	cmd "merchant_back/cmd"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// 创建 Gin 路由引擎
+
+	cmd.InitDB()
+
 	r := gin.Default()
 
 	// 定义路由
